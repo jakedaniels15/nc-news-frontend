@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import TopicCard from "./topic-card";
+import { Link } from "react-router-dom";
 
 function SearchContainer({ handleSearch, search, setSearch, allTopics }) {
   const filtered = allTopics.filter((name) =>
@@ -29,17 +30,17 @@ function SearchContainer({ handleSearch, search, setSearch, allTopics }) {
           ></input>
         </form>
         <p>Hot topics</p>
-        <div className="suggested-topics">
-          {["Coding", "Football", "Cooking"].map((topic) => (
-            <button
-              key={topic}
-              onClick={() => handleSearch(topic)}
-              className="topic-button"
-            >
-              {topic}
-            </button>
-          ))}
-        </div>
+      <div className="suggested-topics">
+  {["Coding", "Football", "Cooking"].map((topic) => (
+    <Link
+      key={topic}
+      to={`/topics/${topic.toLowerCase()}`}
+      className="topic-button"
+    >
+      {topic}
+    </Link>
+  ))}
+</div>
       </section>
     </>
   );

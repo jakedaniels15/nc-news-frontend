@@ -50,3 +50,21 @@ button {
 button:hover {
   background-color: #005fcc;
 }
+
+.comments-section {
+  color: black;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comment {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 0;
+}

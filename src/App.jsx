@@ -5,7 +5,11 @@ import Header from "./components/header";
 import SearchContainer from "./components/search-container";
 import ArticleContainer from "./components/article-container";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
+const currentUser = "grumpy19";
 
 function App() {
   const [search, setSearch] = useState("");
@@ -13,15 +17,25 @@ function App() {
   const [filteredTopic, setFilteredTopic] = useState(null);
   const [articleData, setArticleData] = useState(null);
   const location = useLocation();
+const match = location.pathname.match(/^\/topics\/(.+)$/);
+const navigate = useNavigate();
 
-  useEffect(() => {
-  fetch("https://jakes-news-project.onrender.com/api/articles")
+ useEffect(() => {
+  const fetchURL = match
+    ? `https://jakes-news-project.onrender.com/api/articles?topic=${match[1]}`
+    : "https://jakes-news-project.onrender.com/api/articles";
+
+  fetch(fetchURL)
     .then((res) => res.json())
     .then((data) => {
       setArticleData(data.articles);
+      setFilteredTopic(match ? match[1] : null);
     })
-    .catch((err) => console.error("Failed to load initial articles:", err));
-}, []);
+    .catch((err) => {
+      console.error("Failed to load articles:", err);
+      setArticleData(null);
+    });
+}, [location.pathname]);
 
   useEffect(() => {
     fetch("https://jakes-news-project.onrender.com/api/topics")
@@ -69,14 +83,20 @@ function App() {
           allTopics={allTopics}
         />
       )}
+      {location.pathname.startsWith("/topics/") && (
+  <button onClick={() => navigate("/")} className="back-button">
+    ← Back to Home
+  </button>
+)}
       <Routes>
+        <Route path="/" element={<ArticleContainer articles={articleData} />} />
         <Route
-          path="/"
+          path="/topics/:topic"
           element={<ArticleContainer articles={articleData} />}
         />
         <Route
           path="/articles/:article_id"
-          element={<ArticlePage />}
+          element={<ArticlePage currentUser={currentUser} />}
         />
       </Routes>
     </>
