@@ -24,17 +24,22 @@ function SearchContainer({ handleSearch, search, setSearch, allTopics }) {
             placeholder="Enter Topic Here"
             value={search}
             onChange={(e) => {
-              setSearch(e.target.value); // Update the search value
+              setSearch(e.target.value);
             }}
           ></input>
         </form>
-        <ul className="suggestions">
-          {filtered.map((topic) => (
-            <li key={topic} onClick={() => handleSearch(topic)}>
+        <p>Hot topics</p>
+        <div className="suggested-topics">
+          {["Coding", "Football", "Cooking"].map((topic) => (
+            <button
+              key={topic}
+              onClick={() => handleSearch(topic)}
+              className="topic-button"
+            >
               {topic}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       </section>
     </>
   );
