@@ -65,7 +65,6 @@ function App() {
       });
   }, [location.pathname, selectedSort, allTopics]);
 
-  // Handle topic search
   function handleSearch(topicInput) {
     const lower = topicInput.toLowerCase();
     if (allTopics.includes(lower)) {

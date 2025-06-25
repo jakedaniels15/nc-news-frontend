@@ -17,7 +17,7 @@ if (invalidTopic) {
   // Determine the starting index of the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  // Slice the filtered list to get only the Pokémon for the current page
+  
   const paginatedArticles = articles.slice(
     startIndex,
     startIndex + itemsPerPage
