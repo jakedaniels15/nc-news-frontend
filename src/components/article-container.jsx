@@ -27,6 +27,7 @@ if (invalidTopic) {
     <>
       <section>
         <h3>Articles</h3>
+      <div className="sort-container">
         <select
           value={selectedSort}
           onChange={(e) => setSelectedSort(e.target.value)}
@@ -40,6 +41,7 @@ if (invalidTopic) {
           <option value="votes-asc">Votes ↑</option>
           <option value="votes-desc">Votes ↓</option>
         </select>
+      </div>
         <section className="articles">
           {paginatedArticles.map((article) => (
             <ArticleItem key={article.article_id} article={article} />

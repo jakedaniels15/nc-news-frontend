@@ -122,8 +122,10 @@ function ArticlePage({currentUser}) {
         <img src={article.article_img_url} alt={article.title} />
         <p className="article-body">{article.body}</p>
         <p className="article-votes">Votes: {votes}</p>
+        <div className="vote-buttons">
         <button onClick={handleUpvote}>👍</button>
         <button onClick={handleDownvote}>👎</button>
+        </div>
       </article>
 
      <CommentSection article_id={article_id} currentUser={currentUser} />

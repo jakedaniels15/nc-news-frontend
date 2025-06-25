@@ -11,26 +11,29 @@ function ArticleItem({ article }) {
   );
 
   return (
-    <article className="article-card">
-      <h4>{article.title}</h4>
-      <p className="article-info">
-        By {article.author} | Topic: {article.topic} | Published {formattedDate}
-      </p>
-      <p className="article-body">
-        {article.body
-          ? `${article.body.slice(0, 100)}...`
-          : "No content available."}
-      </p>
-      <Link to={`/articles/${article.article_id}`}>Read more</Link>
-      <img
-        className="articleImage"
-        src={article.article_img_url}
-        alt={article.title}
-      />
-      <p className="article-stats">
-        🗳 {article.votes} votes | 💬 {article.comment_count} comments
-      </p>
-    </article>
+<div className="article-card">
+  <div className="article-content">
+    <div className="article-body">
+      <h3 className="article-title">{article.title}</h3>
+      <p className="article-preview">{article.body.slice(0, 200)}...</p>
+      <Link to={`/articles/${article.article_id}`} className="read-more">
+        Read more →
+      </Link>
+      <div className="article-meta">
+        <span>By {article.author}</span> |{" "}
+        <span>{new Date(article.created_at).toLocaleDateString()}</span>
+      </div>
+    </div>
+
+    <div className="article-image-wrapper">
+      <img src={article.article_img_url} alt={article.title} className="article-image" />
+      <div className="article-stats">
+        <span>💬 {article.comment_count}</span>
+        <span>👍 {article.votes}</span>
+      </div>
+    </div>
+  </div>
+</div>
   );
 }
 

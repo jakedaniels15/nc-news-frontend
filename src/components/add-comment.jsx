@@ -35,18 +35,19 @@ function AddComment({ article_id, currentUser, onAdd }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="add-comment-form">
-      <textarea
-        placeholder="Write your comment..."
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        required
-      />
-      <button type="submit" disabled={posting}>
-        {posting ? "Posting..." : "Post Comment"}
-      </button>
-      {postError && <p className="error">Error: {postError}</p>}
-    </form>
+  <div className="comment-form">
+  <h3>Leave a Comment</h3>
+  <form onSubmit={handleSubmit}>
+    <textarea
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+      placeholder="Type your thoughts here..."
+      className="comment-textarea"
+      required
+    />
+    <button type="submit" className="comment-submit">Post 💬</button>
+  </form>
+</div>
   );
 }
 
