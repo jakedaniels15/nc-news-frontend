@@ -4,10 +4,7 @@ import ArticlePage from "./components/article-page";
 import Header from "./components/header";
 import SearchContainer from "./components/search-container";
 import ArticleContainer from "./components/article-container";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { useParams, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 const currentUser = "grumpy19";
 
@@ -16,27 +13,15 @@ function App() {
   const [allTopics, setAllTopics] = useState([]);
   const [filteredTopic, setFilteredTopic] = useState(null);
   const [articleData, setArticleData] = useState(null);
+  const [selectedSort, setSelectedSort] = useState("");
+  const [invalidTopic, setInvalidTopic] = useState(false);
+
   const location = useLocation();
-const match = location.pathname.match(/^\/topics\/(.+)$/);
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const match = location.pathname.match(/^\/topics\/(.+)$/);
+  const topic = match ? match[1] : null;
 
- useEffect(() => {
-  const fetchURL = match
-    ? `https://jakes-news-project.onrender.com/api/articles?topic=${match[1]}`
-    : "https://jakes-news-project.onrender.com/api/articles";
-
-  fetch(fetchURL)
-    .then((res) => res.json())
-    .then((data) => {
-      setArticleData(data.articles);
-      setFilteredTopic(match ? match[1] : null);
-    })
-    .catch((err) => {
-      console.error("Failed to load articles:", err);
-      setArticleData(null);
-    });
-}, [location.pathname]);
-
+  // Fetch list of valid topics
   useEffect(() => {
     fetch("https://jakes-news-project.onrender.com/api/topics")
       .then((res) => res.json())
@@ -47,34 +32,54 @@ const navigate = useNavigate();
       .catch((err) => console.error("Failed to load topics:", err));
   }, []);
 
-  function handleSearch(topicInput) {
-    const topic = topicInput.toLowerCase();
-    const isValid = allTopics.includes(topic);
-    if (isValid) {
-      fetch(
-        `https://jakes-news-project.onrender.com/api/articles?topic=${topic}`
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log("Fetched data:", data);
-          console.log("Articles:", data.articles);
+  // Fetch articles and validate topic
+  useEffect(() => {
+    if (topic && allTopics.length > 0 && !allTopics.includes(topic)) {
+      setInvalidTopic(true);
+      setArticleData([]);
+      return;
+    }
 
-          setArticleData(data.articles);
-          setFilteredTopic(topic);
-        })
-        .catch((err) => {
-          console.error(err.message);
-          setArticleData(null);
-        });
+    setInvalidTopic(false);
+
+    const params = [];
+    if (topic) params.push(`topic=${topic}`);
+    if (selectedSort) {
+      const [sort_by, order] = selectedSort.split("-");
+      params.push(`sort_by=${sort_by}&order=${order}`);
+    }
+
+    const fetchURL =
+      "https://jakes-news-project.onrender.com/api/articles" +
+      (params.length ? "?" + params.join("&") : "");
+
+    fetch(fetchURL)
+      .then((res) => res.json())
+      .then((data) => {
+        setArticleData(data.articles);
+        setFilteredTopic(topic);
+      })
+      .catch((err) => {
+        console.error("Failed to load articles:", err);
+        setArticleData([]);
+      });
+  }, [location.pathname, selectedSort, allTopics]);
+
+  // Handle topic search
+  function handleSearch(topicInput) {
+    const lower = topicInput.toLowerCase();
+    if (allTopics.includes(lower)) {
+      navigate(`/topics/${lower}`);
     } else {
       setArticleData([]);
+      setInvalidTopic(true);
     }
   }
+
   return (
     <>
       <Header />
+
       {location.pathname === "/" && (
         <SearchContainer
           search={search}
@@ -83,21 +88,41 @@ const navigate = useNavigate();
           allTopics={allTopics}
         />
       )}
+
       {location.pathname.startsWith("/topics/") && (
-  <button onClick={() => navigate("/")} className="back-button">
-    ← Back to Home
-  </button>
-)}
+        <button onClick={() => navigate("/")} className="back-button">
+          ← Back to Home
+        </button>
+      )}
+
       <Routes>
-        <Route path="/" element={<ArticleContainer articles={articleData} />} />
+        <Route
+          path="/"
+          element={
+            <ArticleContainer
+              articles={articleData}
+              selectedSort={selectedSort}
+              setSelectedSort={setSelectedSort}
+              invalidTopic={invalidTopic}
+            />
+          }
+        />
         <Route
           path="/topics/:topic"
-          element={<ArticleContainer articles={articleData} />}
+          element={
+            <ArticleContainer
+              articles={articleData}
+              selectedSort={selectedSort}
+              setSelectedSort={setSelectedSort}
+              invalidTopic={invalidTopic}
+            />
+          }
         />
         <Route
           path="/articles/:article_id"
           element={<ArticlePage currentUser={currentUser} />}
         />
+        <Route path="*" element={<p>Sorry, that page doesn’t exist. 😕</p>} />
       </Routes>
     </>
   );

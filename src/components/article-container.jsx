@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import ArticleItem from "./article-item";
 
-function ArticleContainer({ articles }) {
-  if (!articles) return <p>Loading articles...</p>;
+function ArticleContainer({ articles, selectedSort, setSelectedSort, invalidTopic }) {
+if (!articles) return <p>Loading articles...</p>;
+if (invalidTopic) {
+  return <p>Topic not found. Try choosing one from the list. 🐦</p>;
+}
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -24,6 +27,19 @@ function ArticleContainer({ articles }) {
     <>
       <section>
         <h3>Articles</h3>
+        <select
+          value={selectedSort}
+          onChange={(e) => setSelectedSort(e.target.value)}
+          className="sort-dropdown"
+        >
+          <option value="">Sort by...</option>
+          <option value="created_at-asc">Date ↑</option>
+          <option value="created_at-desc">Date ↓</option>
+          <option value="comment_count-asc">Comments ↑</option>
+          <option value="comment_count-desc">Comments ↓</option>
+          <option value="votes-asc">Votes ↑</option>
+          <option value="votes-desc">Votes ↓</option>
+        </select>
         <section className="articles">
           {paginatedArticles.map((article) => (
             <ArticleItem key={article.article_id} article={article} />
